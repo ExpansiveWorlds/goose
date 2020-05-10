@@ -31,7 +31,7 @@ func DownTo(db *sql.DB, dir string, version int64) error {
 	if err != nil {
 		return err
 	}
-
+	ranMigrations := 0
 	for {
 		currentVersion, err := GetDBVersion(db)
 		if err != nil {
@@ -40,17 +40,18 @@ func DownTo(db *sql.DB, dir string, version int64) error {
 
 		current, err := migrations.Current(currentVersion)
 		if err != nil {
-			log.Printf("goose: no migrations to run. current version: %d\n", currentVersion)
+			log.Printf("goose: DOWN ran: %d migrations. current version: %d\n", ranMigrations, currentVersion)
 			return nil
 		}
 
 		if current.Version <= version {
-			log.Printf("goose: no migrations to run. current version: %d\n", currentVersion)
+			log.Printf("goose: DOWN ran: %d migrations. current version: %d\n", ranMigrations, currentVersion)
 			return nil
 		}
 
 		if err = current.Down(db); err != nil {
 			return err
 		}
+		ranMigrations++
 	}
 }

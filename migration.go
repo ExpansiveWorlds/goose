@@ -68,9 +68,7 @@ func (m *Migration) run(db *sql.DB, direction bool) error {
 			return errors.Wrapf(err, "ERROR %v: failed to run SQL migration", filepath.Base(m.Source))
 		}
 
-		if len(statements) > 0 {
-			log.Println("OK   ", filepath.Base(m.Source))
-		} else {
+		if len(statements) == 0 {
 			log.Println("EMPTY", filepath.Base(m.Source))
 		}
 
@@ -112,9 +110,7 @@ func (m *Migration) run(db *sql.DB, direction bool) error {
 			return errors.Wrap(err, "ERROR failed to commit transaction")
 		}
 
-		if fn != nil {
-			log.Println("OK   ", filepath.Base(m.Source))
-		} else {
+		if fn == nil {
 			log.Println("EMPTY", filepath.Base(m.Source))
 		}
 
